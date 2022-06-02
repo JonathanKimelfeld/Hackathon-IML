@@ -30,28 +30,30 @@ def to_binary(df): #TODO
 
 def drop_cols(df):
     cols_to_drop = ['KI67 protein']
+    df.drop(cols_to_drop
+            )
 # dates: diagnosis and surgeries
 def set_null(df):
     clear_nulls = ['Histopatological degree', 'Basic stage', 'Histological diagnosis',
                    "Lymphatic penetration"]
     for col in clear_nulls:
         for null in ['Null', 'NULL', 'nan']:
-            df = df.replace(null, None)
+            df[col] = df[col].replace(null, None)
 
 def set_dummies(df):
-    to_dummies = [' Form Name', ' Hospital', 'User Name', 'Basic stage', 'Histological diagnosis',
-                  ]
+    to_dummies = [' Form Name', ' Hospital', 'User Name', 'Basic stage', 'Histological diagnosis']
     for dummy in to_dummies:
-        pd.get_dummies(df[dummy], prefix=dummy)
-
+        df = pd.get_dummies(df, prefix=dummy, columns=[dummy])
+    return df
 
 def check_outliers(df):
-    to_check = ['Age', ]
+    to_check = ['Age']
 
 def prepare_data(df):
     df.columns = df.columns.str.replace('אבחנה-', '')
     set_null(df)
     df = set_dummies(df)
+    return df
 
 def split_data(X_file_name, y_file_name):
     X = pd.read_csv(X_file_name)
@@ -61,7 +63,7 @@ def split_data(X_file_name, y_file_name):
     return X_train, y_train, X_dev, y_dev, X_test, y_test
 
 
-prepare_data(df)
+df = prepare_data(df)
 print(df.columns)
 
 # features i didnt include:
